@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+    }
+    #map-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0;
+    }
+    #map {
+      height: 300px; /* mobile-first */
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map-wrap">
+    <div id="map"></div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    (function () {
+
+      const url = new URL(window.location.href);
+
+      const lat = parseFloat(url.searchParams.get("lat"));
+      const lng = parseFloat(url.searchParams.get("lng"));
+      const radius = parseInt(url.searchParams.get("r")) || 2500;
+
+      if (!lat || !lng) {
+        document.getElementById("map").innerHTML =
+          "<p style='padding:16px;text-align:center;font-family:Arial'>Map data not available</p>";
+        return;
+      }
+
+      const map = L.map("map", {
+        zoomControl: true,
+        scrollWheelZoom: true,
+        dragging: true,
+        tap: true
+      });
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap contributors"
+      }).addTo(map);
+
+      const circle = L.circle([lat, lng], {
+        radius: radius,
+        color: "#111827",
+        weight: 2,
+        fillColor: "#111827",
+        fillOpacity: 0.12,
+        opacity: 0.9,
+        interactive: false
+      }).addTo(map);
+
+      map.fitBounds(circle.getBounds(), { padding: [20, 20] });
+
+    })();
+  </script>
+
+</body>
+</html>
